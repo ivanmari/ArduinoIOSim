@@ -3,6 +3,7 @@
 
 #include <ncurses.h>
 #include <thread>
+#include <mutex>
 #include <chrono>
 #include <iostream>
 
@@ -13,6 +14,7 @@ using std::chrono::microseconds;
 using std::chrono::steady_clock;
 
 extern unsigned char GpioSnapshot[20];
+extern std::mutex g_i_mutex;
 
 X86Platform::X86Platform()
 {
@@ -52,6 +54,7 @@ X86Platform::getSystemUpTimeMicros()
 void
 X86Platform::setPinMode(int pin, PinMode mode)
 {
+	std::lock_guard<std::mutex> lock(g_i_mutex);
     switch(mode)
     {
     case PIN_INPUT_PULLUP:
@@ -71,6 +74,7 @@ X86Platform::setPinMode(int pin, PinMode mode)
 void
 X86Platform::setPin(int pin, bool level)
 {
+	std::lock_guard<std::mutex> lock(g_i_mutex);
     static int last_pin = pin;
     static int last_level = level;
     //std::this_thread::sleep_for(std::chrono::milliseconds(150));
