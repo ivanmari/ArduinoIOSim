@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+blink
+hx711_demo
+test_hx711
