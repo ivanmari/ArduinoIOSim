@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libncurses-dev
+
+    - name: Build and Run HX711 Tests
+      run: |
+        g++ -I. -IExamples/Blink tests/test_hx711.cpp HX711/HX711Sim.cpp -o test_hx711
+        ./test_hx711
+
+    - name: Build HX711 Demo
+      run: |
+        g++ -I. -IExamples/Blink Examples/HX711Demo.cpp HX711/HX711Sim.cpp -o hx711_demo
+
+    - name: Build Blink Example
+      run: |
+        g++ -g -DX86_PLAT -o blink Examples/Blink/sim/main.cpp Examples/Blink/sim/X86Platform.cpp Examples/Blink/sim/ui.cpp -IExamples/Blink -lncurses -lpthread
